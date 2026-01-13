@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Digital Product Store</title>
+  <style>
+    /* ====== CSS ====== */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #27ae60;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: 0 auto 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .login-form h2 {
+      margin-top: 0;
+      color: #27ae60;
+      text-align: center;
+    }
+
+    .login-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .login-form input[type="text"], 
+    .login-form input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .login-form button {
+      width: 100%;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-form button:hover {
+      background-color: #219150;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      color: red;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product h3 {
+      margin: 0 0 10px 0;
+      color: #222;
+    }
+
+    .product p {
+      flex-grow: 1;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #27ae60;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .buy-btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .buy-btn:hover:not(:disabled) {
+      background: #219150;
+    }
+
+    .buy-btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .purchase-message {
+      margin-top: 8px;
+      font-weight: bold;
+      color: #27ae60;
+      text-align: center;
+    }
+
+    /* Responsive for small phones */
+    @media (max-width: 400px) {
+      .login-form, .product {
+        padding: 12px;
+      }
+      .buy-btn {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Digital Product Store</h1>
+</header>
+
+<main>
+  <!-- Login Form -->
+  <section class="login-form" id="login-section">
+    <h2>Login</h2>
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Enter username" required />
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Enter password" required />
+    <button onclick="login()">Login</button>
+    <div class="message" id="login-message"></div>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products-section" style="display:none;">
+    <h2>Available Products</h2>
+    <div class="products" id="products-container">
+      <!-- Products will be dynamically added here -->
+    </div>
+  </section>
+</main>
+
+<script>
+  // ===== JavaScript =====
+
+  // Sample product data (like from a database)
+  const products = [
+    {
+      id: 1,
+      name: "Learn JavaScript Ebook",
+      description: "A beginner-friendly guide to JavaScript programming.",
+      price: 9.99,
+    },
+    {
+      id: 2,
+      name: "CSS Masterclass Video Course",
+      description: "Step-by-step CSS course to style beautiful websites.",
+      price: 19.99,
+    },
+    {
+      id: 3,
+      name: "Web Design Coaching Session",
+      description: "One-on-one coaching to improve your web design skills.",
+      price: 49.99,
+    },
+  ];
+
+  // Simulate a logged-in user variable
+  let loggedInUser = null;
+
+  // Login function (very basic, no real auth)
+  function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const loginMessage = document.getElementById("login-message");
+
+    if (username === "" || password === "") {
+      loginMessage.textContent = "Please enter username and password.";
+      return;
+    }
+
+    // For demo, accept any username/password
+    loggedInUser = username;
+
+    // Hide login form and show products
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("products-section").style.display = "block";
+
+    // Clear message and input fields
+    loginMessage.textContent = "";
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+
+    // Load products on the page
+    loadProducts();
+  }
+
+  // Load products into the page
+  function loadProducts() {
+    const container = document.getElementById("products-container");
+    container.innerHTML = ""; // Clear before adding
+
+    products.forEach(product => {
+      // Create product div
+      const productDiv = document.createElement("div");
+      productDiv.className = "product";
+
+      // Add inner HTML
+      productDiv.innerHTML = `
+        <h3>${product.name}</h3>
+        <p>${product.description}</p>
+        <div class="price">$${product.price.toFixed(2)}</div>
+        <button class="buy-btn" id="buy-btn-${product.id}" onclick="buyProduct(${product.id})">Buy Now</button>
+        <div class="purchase-message" id="purchase-msg-${product.id}"></div>
+      `;
+
+      container.appendChild(productDiv);
+    });
+  }
+
+  // Simulate buying a product
+  function buyProduct(productId) {
+    if (!loggedInUser) {
+      alert("Please login first!");
+      return;
+    }
+
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Disable the buy button after purchase
+    const buyBtn = document.getElementById(`buy-btn-${productId}`);
+    buyBtn.disabled = true;
+    buyBtn.textContent = "Purchased";
+
+    // Show confirmation message
+    const msgDiv = document.getElementById(`purchase-msg-${productId}`);
+    msgDiv.textContent = `Thank you, ${loggedInUser}, for purchasing "${product.name}" for $${product.price.toFixed(2)}!`;
+
+    // In a real site, here you would trigger payment processing and product delivery
+  }
+</script>
+
+</body>
+</html> 
